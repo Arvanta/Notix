@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Notix</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+	<style>
+		*,
+		*::before,
+		*::after {
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Vazirmatn', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+			margin: 0;
+			padding: 0;
+			background: #f1f5f9;
+			color: #0f172a;
+			width: 100%;
+			height: 100vh;
+			min-width: 280px;
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+		}
+
+		::-webkit-scrollbar {
+			width: 5px;
+		}
+
+		::-webkit-scrollbar-track {
+			background: transparent;
+		}
+
+		::-webkit-scrollbar-thumb {
+			background: #cbd5e1;
+			border-radius: 10px;
+		}
+
+		::-webkit-scrollbar-thumb:hover {
+			background: #94a3b8;
+		}
+
+		.header {
+			padding: 12px 16px;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+			background: rgba(255, 255, 255, 0.82);
+			backdrop-filter: blur(16px) saturate(1.8);
+			-webkit-backdrop-filter: blur(16px) saturate(1.8);
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 8px;
+			flex-shrink: 0;
+		}
+
+		.header-actions {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			flex: 1;
+		}
+
+		.search-container {
+			position: relative;
+			flex: 1;
+			max-width: 260px;
+			min-width: 100px;
+			flex-shrink: 0;
+		}
+
+		.search-input {
+			width: 100%;
+			padding: 7px 12px 7px 34px;
+			border: 1.5px solid #e2e8f0;
+			border-radius: 10px;
+			font-size: 13px;
+			outline: none;
+			background: #f8fafc;
+			transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+			font-family: inherit;
+			color: #0f172a;
+		}
+
+		.search-input::placeholder {
+			color: #94a3b8;
+		}
+
+		.search-input:focus {
+			border-color: #0d9488;
+			background: #fff;
+			box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+		}
+
+		.search-icon {
+			position: absolute;
+			left: 12px;
+			top: 50%;
+			transform: translateY(-50%);
+			color: #94a3b8;
+			font-size: 12px;
+			transition: color 0.2s;
+		}
+
+		.search-input:focus~.search-icon {
+			color: #0d9488;
+		}
+
+		.btn-new {
+			background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+			color: white;
+			border: none;
+			padding: 7px 16px;
+			border-radius: 10px;
+			font-size: 12px;
+			font-weight: 600;
+			display: flex;
+			align-items: center;
+			gap: 5px;
+			cursor: pointer;
+			flex-shrink: 0;
+			transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+			box-shadow: 0 1px 3px rgba(13, 148, 136, 0.3), 0 1px 2px rgba(13, 148, 136, 0.2);
+			font-family: inherit;
+		}
+
+		.btn-new:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35), 0 2px 4px rgba(13, 148, 136, 0.2);
+		}
+
+		.btn-new:active {
+			transform: translateY(0);
+		}
+
+		.btn-icon {
+			width: 34px;
+			height: 34px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 10px;
+			border: 1.5px solid #e2e8f0;
+			background: #fff;
+			color: #64748b;
+			cursor: pointer;
+			font-size: 14px;
+			flex-shrink: 0;
+			transition: all 0.2s ease;
+		}
+
+		.btn-icon:hover {
+			border-color: #cbd5e1;
+			background: #f8fafc;
+			color: #334155;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+		}
+
+		.notes-section {
+			flex-shrink: 0;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+
+		.notes-header {
+			padding: 8px 16px 4px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 11px;
+			font-weight: 700;
+			color: #64748b;
+			letter-spacing: 0.03em;
+			text-transform: uppercase;
+		}
+
+		.notes-list-container {
+			overflow-y: auto;
+			padding: 0 10px 10px;
+			max-height: min(180px, 30vh);
+		}
+
+		.note-item {
+			padding: 10px 12px;
+			margin: 3px 0;
+			border-radius: 12px;
+			cursor: pointer;
+			display: flex;
+			gap: 10px;
+			align-items: flex-start;
+			border: 1.5px solid transparent;
+			transition: all 0.2s ease;
+			user-select: none;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+		}
+
+		.note-item:hover {
+			background: rgba(255, 255, 255, 0.7);
+			border-color: rgba(0, 0, 0, 0.04);
+		}
+
+		.note-item.active {
+			background: linear-gradient(135deg, rgba(13, 148, 136, 0.06) 0%, rgba(13, 148, 136, 0.02) 100%);
+			border-color: rgba(13, 148, 136, 0.2);
+			box-shadow: 0 1px 4px rgba(13, 148, 136, 0.08);
+		}
+
+		.note-title {
+			font-weight: 700;
+			font-size: 13px;
+			margin-bottom: 2px;
+			color: #1e293b;
+		}
+
+		.note-preview {
+			font-size: 11px;
+			color: #64748b;
+			line-height: 1.5;
+			overflow: hidden;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+		}
+
+		.note-date {
+			font-size: 10px;
+			color: #94a3b8;
+			white-space: nowrap;
+			flex-shrink: 0;
+			padding-top: 2px;
+		}
+
+		.editor-panel {
+			border-top: 1px solid rgba(0, 0, 0, 0.06);
+			background: #fff;
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+			min-height: 0;
+		}
+
+		.toolbar {
+			padding: 8px 12px;
+			background: rgba(248, 250, 252, 0.9);
+			backdrop-filter: blur(8px);
+			border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 5px;
+			flex-shrink: 0;
+		}
+
+		.toolbar-group {
+			display: flex;
+			align-items: center;
+			background: #fff;
+			border: 1.5px solid #e2e8f0;
+			border-radius: 10px;
+			padding: 3px;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+			transition: border-color 0.2s;
+		}
+
+		.toolbar-group:hover {
+			border-color: #cbd5e1;
+		}
+
+		.toolbar-btn {
+			width: 28px;
+			height: 28px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 7px;
+			color: #475569;
+			border: none;
+			background: transparent;
+			cursor: pointer;
+			font-size: 12px;
+			transition: all 0.15s ease;
+		}
+
+		.toolbar-btn:hover {
+			background: #f1f5f9;
+			color: #0d9488;
+		}
+
+		.toolbar-btn:active {
+			background: #e2e8f0;
+			transform: scale(0.92);
+		}
+
+		.font-select,
+		.font-size-select {
+			height: 28px;
+			border: 1.5px solid #e2e8f0;
+			border-radius: 7px;
+			font-size: 11px;
+			padding: 0 6px;
+			background: #fff;
+			color: #334155;
+			margin: 0 2px;
+			font-family: inherit;
+			transition: border-color 0.2s;
+			cursor: pointer;
+		}
+
+		.font-select:focus,
+		.font-size-select:focus {
+			border-color: #0d9488;
+			outline: none;
+		}
+
+		.note-title-input {
+			padding: 10px 16px;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			flex-shrink: 0;
+		}
+
+		.note-title-input input {
+			flex: 1;
+			border: none;
+			font-size: 17px;
+			font-weight: 700;
+			outline: none;
+			background: transparent;
+			font-family: inherit;
+			color: #0f172a;
+		}
+
+		.note-title-input input::placeholder {
+			color: #cbd5e1;
+		}
+
+		.editor-wrapper {
+			flex: 1;
+			padding: 0 14px 10px;
+			display: flex;
+			flex-direction: column;
+			min-height: 0;
+		}
+
+		.editor {
+			flex: 1;
+			padding: 14px;
+			overflow-y: auto;
+			font-size: 14px;
+			line-height: 1.75;
+			outline: none;
+			min-height: 160px;
+			border: 1.5px solid #e2e8f0;
+			border-radius: 12px;
+			background: #fff;
+			transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+			color: #1e293b;
+		}
+
+		.editor:focus {
+			border-color: #0d9488;
+			box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.08);
+		}
+
+		.editor:empty::before {
+			content: attr(placeholder);
+			color: #cbd5e1;
+			pointer-events: none;
+		}
+
+		.rich-text a {
+			color: #0d9488;
+			text-decoration: underline;
+			cursor: pointer;
+		}
+
+		.editor-footer {
+			padding: 8px 16px;
+			border-top: 1px solid rgba(0, 0, 0, 0.06);
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			font-size: 11px;
+			color: #94a3b8;
+			background: rgba(248, 250, 252, 0.6);
+			flex-shrink: 0;
+		}
+
+		.empty-state {
+			flex: 1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			padding: 25px 20px;
+		}
+
+		.toast {
+			position: fixed;
+			bottom: 16px;
+			left: 50%;
+			transform: translateX(-50%) translateY(20px);
+			background: #1e293b;
+			color: #f1f5f9;
+			padding: 9px 18px;
+			border-radius: 12px;
+			font-size: 12px;
+			font-weight: 500;
+			box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+			display: none;
+			align-items: center;
+			gap: 8px;
+			z-index: 1000;
+			opacity: 0;
+			transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+			font-family: inherit;
+		}
+
+		.toast.show {
+			display: flex;
+			opacity: 1;
+			transform: translateX(-50%) translateY(0);
+		}
+
+		.modal {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(15, 23, 42, 0.4);
+			backdrop-filter: blur(6px);
+			-webkit-backdrop-filter: blur(6px);
+			display: none;
+			align-items: center;
+			justify-content: center;
+			z-index: 2000;
+			padding: 20px;
+			animation: modalFadeIn 0.25s ease;
+		}
+
+		@keyframes modalFadeIn {
+			from {
+				opacity: 0;
+			}
+
+			to {
+				opacity: 1;
+			}
+		}
+
+		.modal-content {
+			background: #fff;
+			border-radius: 16px;
+			width: 100%;
+			max-width: 320px;
+			box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.08);
+			overflow: hidden;
+			animation: modalSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+
+		@keyframes modalSlideUp {
+			from {
+				opacity: 0;
+				transform: translateY(16px) scale(0.97);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0) scale(1);
+			}
+		}
+
+		.modal-header {
+			padding: 16px 18px 12px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid #f1f5f9;
+		}
+
+		.modal-header h3 {
+			font-size: 15px;
+			font-weight: 700;
+			color: #0f172a;
+		}
+
+		.modal-header button {
+			width: 28px;
+			height: 28px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 8px;
+			border: none;
+			background: #f8fafc;
+			cursor: pointer;
+			color: #64748b;
+			font-size: 18px;
+			line-height: 1;
+			transition: all 0.15s ease;
+		}
+
+		.modal-header button:hover {
+			background: #f1f5f9;
+			color: #334155;
+		}
+
+		.modal-body {
+			padding: 14px 18px 18px;
+		}
+
+		.theme-btn {
+			font-family: inherit;
+			transition: all 0.2s ease;
+			color: #475569;
+			font-weight: 500;
+		}
+
+		.theme-btn:hover {
+			border-color: #cbd5e1 !important;
+			background: #f8fafc !important;
+		}
+
+		.theme-btn.active {
+			background: linear-gradient(135deg, rgba(13, 148, 136, 0.08) 0%, rgba(13, 148, 136, 0.04) 100%) !important;
+			border-color: #0d9488 !important;
+			color: #0d9488 !important;
+			font-weight: 600;
+		}
+
+		.toolbar-group div[style*="width:1px"] {
+			background: #e2e8f0 !important;
+			border-radius: 1px;
+		}
+
+		body.dark-theme {
+			background: #0c1222;
+			color: #e2e8f0;
+		}
+
+		body.dark-theme .header {
+			background: rgba(22, 33, 55, 0.85);
+			border-bottom-color: rgba(255, 255, 255, 0.06);
+		}
+
+		body.dark-theme .search-input {
+			background: rgba(30, 41, 59, 0.8);
+			border-color: rgba(255, 255, 255, 0.08);
+			color: #e2e8f0;
+		}
+
+		body.dark-theme .search-input::placeholder {
+			color: #475569;
+		}
+
+		body.dark-theme .search-input:focus {
+			border-color: #14b8a6;
+			background: rgba(30, 41, 59, 1);
+			box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15);
+		}
+
+		body.dark-theme .btn-icon {
+			background: rgba(30, 41, 59, 0.8);
+			border-color: rgba(255, 255, 255, 0.08);
+			color: #94a3b8;
+		}
+
+		body.dark-theme .btn-icon:hover {
+			background: rgba(51, 65, 85, 0.8);
+			border-color: rgba(255, 255, 255, 0.12);
+			color: #e2e8f0;
+		}
+
+		body.dark-theme .btn-new {
+			background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+			box-shadow: 0 1px 4px rgba(20, 184, 166, 0.25);
+		}
+
+		body.dark-theme .btn-new:hover {
+			box-shadow: 0 4px 16px rgba(20, 184, 166, 0.35);
+		}
+
+		body.dark-theme .notes-header {
+			color: #64748b;
+		}
+
+		body.dark-theme .note-item {
+			border-color: transparent;
+		}
+
+		body.dark-theme .note-item:hover {
+			background: rgba(30, 41, 59, 0.6);
+			border-color: rgba(255, 255, 255, 0.04);
+		}
+
+		body.dark-theme .note-item.active {
+			background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(20, 184, 166, 0.03) 100%);
+			border-color: rgba(20, 184, 166, 0.25);
+			box-shadow: 0 1px 6px rgba(20, 184, 166, 0.1);
+		}
+
+		body.dark-theme .note-title {
+			color: #e2e8f0;
+		}
+
+		body.dark-theme .note-preview {
+			color: #64748b;
+		}
+
+		body.dark-theme .note-date {
+			color: #475569;
+		}
+
+		body.dark-theme .editor-panel {
+			background: #131c2e;
+			border-top-color: rgba(255, 255, 255, 0.06);
+		}
+
+		body.dark-theme .toolbar {
+			background: rgba(15, 23, 42, 0.7);
+			border-bottom-color: rgba(255, 255, 255, 0.06);
+		}
+
+		body.dark-theme .toolbar-group {
+			background: rgba(30, 41, 59, 0.8);
+			border-color: rgba(255, 255, 255, 0.08);
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+		}
+
+		body.dark-theme .toolbar-group:hover {
+			border-color: rgba(255, 255, 255, 0.12);
+		}
+
+		body.dark-theme .toolbar-btn {
+			color: #94a3b8;
+		}
+
+		body.dark-theme .toolbar-btn:hover {
+			background: rgba(51, 65, 85, 0.6);
+			color: #14b8a6;
+		}
+
+		body.dark-theme .toolbar-btn:active {
+			background: rgba(71, 85, 105, 0.5);
+		}
+
+		body.dark-theme .toolbar-group div[style*="width:1px"] {
+			background: rgba(255, 255, 255, 0.08) !important;
+		}
+
+		body.dark-theme .font-select,
+		body.dark-theme .font-size-select {
+			background: rgba(30, 41, 59, 0.8);
+			border-color: rgba(255, 255, 255, 0.08);
+			color: #e2e8f0;
+		}
+
+		body.dark-theme .font-select:focus,
+		body.dark-theme .font-size-select:focus {
+			border-color: #14b8a6;
+		}
+
+		body.dark-theme .font-select option,
+		body.dark-theme .font-size-select option {
+			background: #1e293b;
+			color: #e2e8f0;
+		}
+
+		body.dark-theme .note-title-input {
+			background: #131c2e;
+			border-bottom-color: rgba(255, 255, 255, 0.06);
+		}
+
+		body.dark-theme .note-title-input input {
+			color: #e2e8f0;
+		}
+
+		body.dark-theme .note-title-input input::placeholder {
+			color: #475569;
+		}
+
+		body.dark-theme .editor {
+			background: rgba(22, 33, 55, 0.6);
+			border-color: rgba(255, 255, 255, 0.08);
+			color: #cbd5e1;
+		}
+
+		body.dark-theme .editor:focus {
+			border-color: #14b8a6;
+			box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+		}
+
+		body.dark-theme .editor:empty::before {
+			color: #334155;
+		}
+
+		body.dark-theme .rich-text a {
+			color: #14b8a6;
+		}
+
+		body.dark-theme .editor-footer {
+			background: rgba(15, 23, 42, 0.5);
+			border-top-color: rgba(255, 255, 255, 0.06);
+			color: #475569;
+		}
+
+		body.dark-theme .empty-state {
+			background: #0c1222;
+		}
+
+		body.dark-theme .toast {
+			background: #1e293b;
+			color: #e2e8f0;
+			box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+		}
+
+		body.dark-theme .modal {
+			background: rgba(0, 0, 0, 0.5);
+		}
+
+		body.dark-theme .modal-content {
+			background: #1e293b;
+			box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+		}
+
+		body.dark-theme .modal-header {
+			border-bottom-color: rgba(255, 255, 255, 0.06);
+		}
+
+		body.dark-theme .modal-header h3 {
+			color: #e2e8f0;
+		}
+
+		body.dark-theme .modal-header button {
+			background: rgba(51, 65, 85, 0.5);
+			color: #94a3b8;
+		}
+
+		body.dark-theme .modal-header button:hover {
+			background: rgba(71, 85, 105, 0.5);
+			color: #e2e8f0;
+		}
+
+		body.dark-theme .modal-body div[style*="border-bottom"] {
+			border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+		}
+
+		body.dark-theme .modal-body div[style*="font-weight:500"] {
+			color: #e2e8f0;
+		}
+
+		body.dark-theme .modal-body div[style*="font-size:10px"] {
+			color: #64748b;
+		}
+
+		body.dark-theme .theme-btn {
+			background: rgba(30, 41, 59, 0.8) !important;
+			border-color: rgba(255, 255, 255, 0.08) !important;
+			color: #94a3b8 !important;
+		}
+
+		body.dark-theme .theme-btn:hover {
+			border-color: rgba(255, 255, 255, 0.15) !important;
+			background: rgba(51, 65, 85, 0.8) !important;
+		}
+
+		body.dark-theme .theme-btn.active {
+			background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(20, 184, 166, 0.05) 100%) !important;
+			border-color: #14b8a6 !important;
+			color: #14b8a6 !important;
+		}
+
+		body.dark-theme .editor-footer button[style*="background:#fee2e2"] {
+			background: rgba(239, 68, 68, 0.12) !important;
+			color: #f87171 !important;
+		}
+
+		body.dark-theme .editor-footer button[style*="background:#f1f5f9"] {
+			background: rgba(51, 65, 85, 0.5) !important;
+			color: #94a3b8 !important;
+		}
+
+		body.dark-theme .modal-body button[style*="background:#f1f5f9"] {
+			background: rgba(51, 65, 85, 0.5) !important;
+			color: #94a3b8 !important;
+		}
+
+		body.dark-theme .modal-body button[style*="background:#f1f5f9"]:hover {
+			background: rgba(71, 85, 105, 0.5) !important;
+			color: #e2e8f0 !important;
+		}
+
+		body.dark-theme #empty-state div div[style*="background:#dbeafe"] {
+			background: rgba(20, 184, 166, 0.12) !important;
+		}
+
+		body.dark-theme #empty-state h3 {
+			color: #e2e8f0 !important;
+		}
+
+		body.dark-theme #empty-state p {
+			color: #64748b !important;
+		}
+
+		body.dark-theme ::-webkit-scrollbar-thumb {
+			background: #334155;
+		}
+
+		body.dark-theme ::-webkit-scrollbar-thumb:hover {
+			background: #475569;
+		}
+
+		::selection {
+			background: rgba(13, 148, 136, 0.2);
+			color: #0f172a;
+		}
+
+		body.dark-theme ::selection {
+			background: rgba(20, 184, 166, 0.3);
+			color: #e2e8f0;
+		}
+
+		.note-pin-btn {
+			background: none;
+			border: none;
+			cursor: pointer;
+			color: #e2e8f0;
+			padding: 0;
+			font-size: 11px;
+			transition: all 0.2s ease;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 20px;
+			height: 20px;
+			flex-shrink: 0;
+			border-radius: 5px;
+			transform: scale(1);
+		}
+
+		.note-pin-btn:hover {
+			color: #94a3b8;
+			background: rgba(0, 0, 0, 0.04);
+			transform: scale(1.2);
+		}
+
+		.note-pin-btn.active {
+			color: #0d9488;
+			background: rgba(13, 148, 136, 0.1);
+			transform: scale(1.2);
+			box-shadow: 0 0 0 1px rgba(13, 148, 136, 0.2);
+		}
+
+		.note-pin-btn.active:hover {
+			color: #0f766e;
+			background: rgba(13, 148, 136, 0.15);
+		}
+
+		body.dark-theme .note-pin-btn {
+			color: #334155;
+		}
+
+		body.dark-theme .note-pin-btn:hover {
+			color: #64748b;
+			background: rgba(255, 255, 255, 0.05);
+		}
+
+		body.dark-theme .note-pin-btn.active {
+			color: #14b8a6;
+			background: rgba(20, 184, 166, 0.1);
+			box-shadow: 0 0 0 1px rgba(20, 184, 166, 0.2);
+		}
+
+		body.dark-theme .note-pin-btn.active:hover {
+			color: #2dd4bf;
+		}
+
+		.note-delete-btn {
+			background: none; border: none; cursor: pointer;
+			color: #e2e8f0; padding: 0; font-size: 11px;
+			transition: all 0.2s ease; 
+			display: flex; align-items: center; justify-content: center;
+			width: 20px; height: 20px; flex-shrink: 0;
+			border-radius: 5px;
+			transform: scale(1);
+		}
+		.note-delete-btn:hover { 
+			color: #ef4444;
+			background: rgba(239, 68, 68, 0.1); 
+			transform: scale(1.2); 
+		}
+
+		body.dark-theme .note-delete-btn { color: #334155; }
+		body.dark-theme .note-delete-btn:hover { 
+			color: #f87171; 
+			background: rgba(248, 113, 113, 0.1); 
+		}
+	</style>
+</head>
+
+<body>
+	<div class="header">
+		<div class="header-actions">
+			<div class="search-container">
+				<input id="search-input" type="text" placeholder="Search..." class="search-input">
+				<i class="fa-solid fa-search search-icon"></i>
+			</div>
+			<button id="settings-btn" class="btn-icon" title="Settings">
+				<i class="fa-solid fa-cog"></i>
+			</button>
+			<button id="new-note-btn" class="btn-new">
+				<i class="fa-solid fa-plus"></i>
+				<span>New</span>
+			</button>
+		</div>
+	</div>
+	<div class="notes-section" id="notes-section">
+		<div class="notes-header">
+			<span>Notes</span>
+			<button id="toggle-notes-btn" class="btn-icon" style="width:24px;height:24px;">
+				<i class="fa-solid fa-chevron-up"></i>
+			</button>
+		</div>
+		<div id="notes-list-container" class="notes-list-container">
+			<div id="notes-list"></div>
+		</div>
+	</div>
+	<div id="editor-panel" class="editor-panel" style="display: none;">
+		<!-- Toolbar -->
+		<div class="toolbar">
+			<!-- Row 1: Formatting & Lists -->
+			<div class="toolbar-group">
+				<button id="btn-bold" class="toolbar-btn" title="Bold"><i class="fa-solid fa-bold"></i></button>
+				<button id="btn-italic" class="toolbar-btn" title="Italic"><i class="fa-solid fa-italic"></i></button>
+				<button id="btn-underline" class="toolbar-btn" title="Underline"><i class="fa-solid fa-underline"></i></button>
+				<button id="btn-link" class="toolbar-btn" title="Insert link"><i class="fa-solid fa-link"></i></button>
+				<div style="width:1px;height:16px;background:#e2e8f0;margin:0 3px;"></div>
+				<button id="btn-bullet" class="toolbar-btn" title="Bullet List"><i class="fa-solid fa-list-ul"></i></button>
+				<button id="btn-number" class="toolbar-btn" title="Numbered List"><i class="fa-solid fa-list-ol"></i></button>
+			</div>
+			<!-- Row 1: Alignment -->
+			<div class="toolbar-group">
+				<button id="btn-align-left" class="toolbar-btn" title="Align Left"><i class="fa-solid fa-align-left"></i></button>
+				<button id="btn-align-center" class="toolbar-btn" title="Align Center"><i class="fa-solid fa-align-center"></i></button>
+				<button id="btn-align-right" class="toolbar-btn" title="Align Right"><i class="fa-solid fa-align-right"></i></button>
+			</div>
+			<!-- Row 1: Direction (RTL/LTR) -->
+			<div class="toolbar-group">
+				<button id="btn-rtl" class="toolbar-btn" title="RTL"><i class="fa-solid fa-arrow-right"></i></button>
+				<button id="btn-ltr" class="toolbar-btn" title="LTR"><i class="fa-solid fa-arrow-left"></i></button>
+			</div>
+			<!-- Row 2: Undo/Redo & Fonts -->
+			<div class="toolbar-group" style="margin-top:4px;">
+				<button id="btn-undo" class="toolbar-btn" title="Undo"><i class="fa-solid fa-undo"></i></button>
+				<button id="btn-redo" class="toolbar-btn" title="Redo"><i class="fa-solid fa-redo"></i></button>
+				<div style="width:1px;height:16px;background:#e2e8f0;margin:0 3px;"></div>
+				<select id="font-select" class="font-select" title="Font">
+					<option value="Inter">Inter</option>
+					<option value="Georgia">Georgia</option>
+					<option value="Times New Roman">Times New Roman</option>
+					<option value="Arial">Arial</option>
+					<option value="Courier New">Courier New</option>
+					<option value="Vazirmatn">Vazirmatn</option>
+				</select>
+				<select id="font-size-select" class="font-size-select" title="Font Size">
+					<option value="10">10px</option>
+					<option value="12">12px</option>
+					<option value="14">14px</option>
+					<option value="16" selected>16px</option>
+					<option value="18">18px</option>
+					<option value="20">20px</option>
+					<option value="24">24px</option>
+				</select>
+			</div>
+			<div class="toolbar-group">
+				<!-- Text Color -->
+				<div style="position:relative;">
+					<input type="color" id="native-color-picker" value="#000000" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;">
+					<button id="btn-color" class="toolbar-btn" title="Text color"><i class="fa-solid fa-palette"></i></button>
+				</div>
+				<!-- Background Color -->
+				<div style="position:relative;">
+					<input type="color" id="native-bg-color-picker" value="#ffffff" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;">
+					<button id="btn-bg-color" class="toolbar-btn" title="Background color"><i class="fa-solid fa-fill-drip"></i></button>
+				</div>
+			</div>
+		</div>
+		<div class="note-title-input">
+			<input id="note-title" type="text" placeholder="Note title...">
+			<div id="note-meta" style="font-size:10px;color:#94a3b8;white-space:nowrap;"></div>
+		</div>
+		<div class="editor-wrapper">
+			<div id="editor" class="editor rich-text" contenteditable="true" placeholder="Start writing your note..."></div>
+		</div>
+		<div class="editor-footer">
+			<div style="display:flex;gap:10px;">
+				<span id="word-count">0 words</span>
+				<span id="char-count">0 chars</span>
+			</div>
+			<div style="display:flex; align-items:center; gap:6px;">
+				<div style="display:flex; align-items:center; gap:4px; font-size:10px;">
+					<i class="fa-solid fa-sync" style="color:#0d9488;"></i>
+					<span>Auto-saved</span>
+				</div>
+				<button id="btn-delete" style="padding:4px 10px; font-size:11px; background:#fee2e2; color:#ef4444; border:none; border-radius:8px; cursor:pointer; transition:all 0.15s; font-family:inherit;">
+					<i class="fa-solid fa-trash"></i>
+				</button>
+				<button id="btn-close-note" style="padding:4px 12px; font-size:11px; background:#f1f5f9; border:none; border-radius:8px; color:#64748b; cursor:pointer; font-weight:500; transition:all 0.15s; font-family:inherit;"> Close </button>
+			</div>
+		</div>
+	</div>
+	<div id="empty-state" style="flex:1; display:flex; align-items: center; justify-content: center; text-align: center; padding: 25px 20px;">
+		<div>
+			<div style="width:60px;height:60px;background:linear-gradient(135deg, rgba(13,148,136,0.1) 0%, rgba(13,148,136,0.05) 100%);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;border:1.5px solid rgba(13,148,136,0.12);">
+				<i class="fa-solid fa-sticky-note" style="color:#0d9488;font-size:24px;"></i>
+			</div>
+			<h3 style="font-size:16px;font-weight:700;color:#1e293b;margin:0 0 4px;">No notes yet</h3>
+			<p style="font-size:12px;color:#94a3b8;margin:0;">Click "New" to create your first note</p>
+			<button id="empty-new-btn" style="margin-top:16px;background:linear-gradient(135deg, #0d9488 0%, #0f766e 100%);color:white;padding:8px 20px;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;margin-left:auto;margin-right:auto;box-shadow:0 2px 8px rgba(13,148,136,0.3);transition:all 0.25s;font-family:inherit;">
+				<i class="fa-solid fa-plus"></i>
+				<span>Create new note</span>
+			</button>
+		</div>
+	</div>
+	<div id="toast" class="toast">
+		<span id="toast-text"></span>
+	</div>
+	<div id="settings-modal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3 style="margin:0;font-size:14px;">Settings</h3>
+				<button id="close-settings" style="background:none;border:none;font-size:20px;cursor:pointer;color:#64748b;">×</button>
+			</div>
+			<div class="modal-body">
+				<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f1f5f9;">
+					<div>
+						<div style="font-weight:600;font-size:13px;">Export all notes</div>
+						<div style="font-size:11px;color:#94a3b8;">Download as JSON</div>
+					</div>
+					<button id="btn-export-all" style="padding:6px 14px;font-size:11px;background:#f1f5f9;border:none;border-radius:8px;cursor:pointer;font-weight:500;transition:all 0.15s;font-family:inherit;color:#475569;">Export</button>
+				</div>
+				<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
+					<div>
+						<div style="font-weight:600;font-size:13px;">Import notes</div>
+						<div style="font-size:11px;color:#94a3b8;">From JSON file</div>
+					</div>
+					<button id="btn-import" style="padding:6px 14px;font-size:11px;background:#f1f5f9;border:none;border-radius:8px;cursor:pointer;font-weight:500;transition:all 0.15s;font-family:inherit;color:#475569;">Import</button>
+					<input type="file" id="import-file" accept=".json" style="display:none;">
+				</div>
+				<div style="margin-top:14px;">
+					<div style="font-weight:600;font-size:13px;margin-bottom:8px;">Theme</div>
+					<div style="display:flex;gap:6px;">
+						<button id="theme-light" class="theme-btn active" style="flex:1;padding:8px;border-radius:10px;border:1.5px solid #e2e8f0;background:white;cursor:pointer;font-size:12px;">Light</button>
+						<button id="theme-dark" class="theme-btn" style="flex:1;padding:8px;border-radius:10px;border:1.5px solid #e2e8f0;background:white;cursor:pointer;font-size:12px;">Dark</button>
+						<button id="theme-auto" class="theme-btn" style="flex:1;padding:8px;border-radius:10px;border:1.5px solid #e2e8f0;background:white;cursor:pointer;font-size:12px;">Auto</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="sidebar.js"></script>
+</body>
+
+</html>

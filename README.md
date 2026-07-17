@@ -2,6 +2,11 @@
 
 A fast, beautiful, and minimal note-taking extension built directly into the Firefox Sidebar.
 
+## 📦 Installation
+
+* **Firefox:** Install the extension from the official Mozilla site: [Get Notix for Firefox](https://addons.mozilla.org/en-US/firefox/addon/notix/)
+* **Chrome:** The version for Chrome and Chromium-based browsers will be released in the future.
+
 ## ✨ Overview
 
 Notix offers a distraction-free environment to capture your ideas without leaving your current webpage. With a focus on UI/UX, privacy, and smooth interactions, it is the perfect lightweight alternative to heavy note-taking apps.

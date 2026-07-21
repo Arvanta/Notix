@@ -2,6 +2,8 @@
 
 A fast, beautiful, and minimal note-taking extension built directly into the Firefox Sidebar.
 
+![alt text](https://github.com/Arvanta/Notix/blob/main/notix_ScreenShot.png?raw=true)
+
 ## 📦 Installation
 
 * **Firefox:** Install the extension from the official Mozilla site: [Get Notix for Firefox](https://addons.mozilla.org/en-US/firefox/addon/notix/)
